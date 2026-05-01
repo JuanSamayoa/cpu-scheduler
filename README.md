@@ -1,73 +1,90 @@
-# React + TypeScript + Vite
+# CPU Scheduler - Simulador de Planificación de Procesos
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicación gráfica e interactiva para simular algoritmos de planificación de procesos en sistemas operativos.
 
-Currently, two official plugins are available:
+## Características
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Algoritmos implementados**: FCFS, SJF, Round Robin
+- **Estados de proceso**: Nuevo, Listo, Ejecución, Terminado
+- **Visualización en tiempo real**:
+  - Diagrama de Gantt animado
+  - Colas de procesos
+  - Métricas (WT, TAT, RT)
+  - Bitácora de eventos
 
-## React Compiler
+## Requisitos
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Node.js 18+
+- pnpm (gestor de paquetes)
 
-## Expanding the ESLint configuration
+## Instalación
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd cpu-scheduler
+pnpm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Ejecución
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+pnpm dev
 ```
+
+## Estructura del Proyecto
+
+```
+src/
+├── engine/                    # Motor lógico
+│   ├── algorithms/           # Algoritmos de planificación
+│   │   ├── FCFS.ts           # First Come First Served
+│   │   ├── SJF.ts            # Shortest Job First
+│   │   └── RoundRobin.ts     # Round Robin
+│   ├── core/                 # Nucleo del scheduler
+│   │   ├── Scheduler.ts      # Motor de simulación
+│   │   └── types.ts          # Tipos y configuración
+│   └── models/               # Modelos de datos
+│       ├── Process.ts        # Entidad proceso
+│       └── GanttEntry.ts     # Entrada del diagrama
+├── store/                    # Gestión de estado (Zustand)
+│   └── useSchedulerStore.ts  # Estado global + animaciones
+├── components/               # Componentes UI
+│   ├── ControlPanel.tsx      # Panel de control
+│   ├── GanttChart.tsx        # Diagrama de Gantt
+│   ├── ProcessQueues.tsx     # Visualización de colas
+│   ├── MetricsTable.tsx      # Tabla de métricas
+│   └── StepLog.tsx           # Bitácora de eventos
+└── App.tsx                   # Componente principal
+```
+
+## Algoritmos
+
+### FCFS (First Come First Served)
+- Orden de llegada
+- No apropiativo
+- Favorece procesos largos
+
+### SJF (Shortest Job First)
+- Menor tiempo de burst primero
+- No apropiativo
+- Minimiza tiempo promedio de espera
+
+### Round Robin
+- Cola FIFO circular
+- Quantum configurable (1-10)
+- Apropiativo por tiempo
+
+## Estados del Proceso
+
+| Estado | Descripción |
+|--------|-------------|
+| Nuevo | Proceso creado, aún no cargado en memoria |
+| Listo | Proceso en cola de espera, listo para ejecutar |
+| Ejecución | Proceso usando la CPU |
+| Terminado | Proceso completado |
+
+## Métricas
+
+- **WT (Waiting Time)**: Tiempo total en cola de listos
+- **TAT (Turnaround Time)**: Tiempo desde llegada hasta terminación
+- **RT (Response Time)**: Tiempo desde llegada hasta primera ejecución
+- **CPU Utilization**: Porcentaje de uso de CPU
